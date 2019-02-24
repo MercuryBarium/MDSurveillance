@@ -1,6 +1,5 @@
 ﻿using AForge.Video.DirectShow;
 using Emgu.CV;
-using Emgu.CV.Cuda;
 using Emgu.CV.UI;
 using System;
 using System.Collections.Generic;

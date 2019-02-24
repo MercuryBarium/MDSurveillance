@@ -31,7 +31,7 @@ namespace Image_detection_Surveilance
         {
             Timer TN = new Timer();
             TN.Tick += new EventHandler(NormalCapture);
-            TN.Interval = 1000;
+            TN.Interval = 33;
             TN.Start();
         }
         
@@ -43,8 +43,8 @@ namespace Image_detection_Surveilance
                 Image<Bgr, byte> currentFrame = _cap.QueryFrame().ToImage<Bgr, byte>();
                 DateTime timeNow = DateTime.Now;
 
-                string S = destFolder + timeNow.ToString();
-                CvInvoke.PutText(currentFrame, S, new System.Drawing.Point(10, 25), FontFace.HersheyComplex, 1.0, new Bgr(0,0,255).MCvScalar);
+                string S = destFolder + "  " + timeNow.ToString();
+                CvInvoke.PutText(currentFrame, S, new System.Drawing.Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0,0,255).MCvScalar);
                 
                 imageBox.Image = currentFrame;
                 imageBox.Invalidate();
