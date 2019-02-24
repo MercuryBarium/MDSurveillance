@@ -8,6 +8,9 @@ namespace Image_detection_Surveilance
 {
     class SaveImage
     {
+        public SaveImage(string saveFolder)
+        {
 
+        }
     }
 }
