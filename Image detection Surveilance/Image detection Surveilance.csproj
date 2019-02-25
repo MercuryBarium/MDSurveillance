@@ -65,10 +65,10 @@
       <HintPath>..\packages\AForge.Video.DirectShow.2.2.5\lib\AForge.Video.DirectShow.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV.UI, Version=3.4.3.3016, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <HintPath>..\packages\EMGU.CV-CUDA.3.4.3.3016\lib\net35\Emgu.CV.UI.dll</HintPath>
+      <HintPath>..\packages\EMGU.CV.3.4.3.3016\lib\net35\Emgu.CV.UI.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV.World, Version=3.4.3.3016, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <HintPath>..\packages\EMGU.CV-CUDA.3.4.3.3016\lib\net35\Emgu.CV.World.dll</HintPath>
+      <HintPath>..\packages\EMGU.CV.3.4.3.3016\lib\net35\Emgu.CV.World.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -135,8 +135,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\EMGU.CUFFT.9.1.0\build\EMGU.CUFFT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EMGU.CUFFT.9.1.0\build\EMGU.CUFFT.targets'))" />
     <Error Condition="!Exists('..\packages\EMGU.CV-CUDA.DEPENDENCY.9.1.0\build\EMGU.CV-CUDA.DEPENDENCY.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EMGU.CV-CUDA.DEPENDENCY.9.1.0\build\EMGU.CV-CUDA.DEPENDENCY.targets'))" />
-    <Error Condition="!Exists('..\packages\EMGU.CV-CUDA.3.4.3.3016\build\EMGU.CV-CUDA.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EMGU.CV-CUDA.3.4.3.3016\build\EMGU.CV-CUDA.targets'))" />
+    <Error Condition="!Exists('..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets'))" />
   </Target>
   <Import Project="..\packages\EMGU.CV-CUDA.DEPENDENCY.9.1.0\build\EMGU.CV-CUDA.DEPENDENCY.targets" Condition="Exists('..\packages\EMGU.CV-CUDA.DEPENDENCY.9.1.0\build\EMGU.CV-CUDA.DEPENDENCY.targets')" />
-  <Import Project="..\packages\EMGU.CV-CUDA.3.4.3.3016\build\EMGU.CV-CUDA.targets" Condition="Exists('..\packages\EMGU.CV-CUDA.3.4.3.3016\build\EMGU.CV-CUDA.targets')" />
+  <Import Project="..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets" Condition="Exists('..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets')" />
 </Project>

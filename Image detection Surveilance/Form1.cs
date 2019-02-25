@@ -22,9 +22,7 @@ namespace Image_detection_Surveilance
 
         public Form1()
         {
-
-            
-            InitializeComponent();
+            InitializeComponent(); 
         }
 
         private void cameraAdder_Click(object sender, EventArgs e)
