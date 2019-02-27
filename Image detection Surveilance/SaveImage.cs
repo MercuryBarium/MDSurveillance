@@ -9,27 +9,33 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Drawing;
+using System.Security.AccessControl;
 
 namespace Image_detection_Surveilance
 {
-    class SaveImage
+    class SaveImage 
     {
-        public SaveImage(Image<Bgr, byte> image, string saveFolder, string fileName)
+        
+
+        public void saveJpeg(Image<Bgr, byte> image, string saveFolder, string fileName)
         {
-            string desiredDIR = Application.StartupPath + "/" + saveFolder;
-            if (Directory.Exists(desiredDIR)) 
+            string desiredDIR = Application.StartupPath + @"\\" + saveFolder;
+            if (!Directory.Exists(desiredDIR))
             {
-                SaveFileDialog dialog = new SaveFileDialog();
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    
-                    
-                }
-            }
-            else
-            {
+                
+
                 Directory.CreateDirectory(desiredDIR);
             }
+
+
+
+
+            FileStream stream = File.OpenWrite(desiredDIR + @"\\" + fileName + ".jpeg");
+            Image SystemImage = image.ToBitmap();
+            SystemImage.Save(stream, ImageFormat.Jpeg);
+            stream.Close();
         }
+
+        
     }
 }
