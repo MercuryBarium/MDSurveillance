@@ -18,17 +18,24 @@ namespace Image_detection_Surveilance
             imageBox = imBox;
             destFolder = dest;
             NCAM = cameraInt;
+            _cap = new VideoCapture(NCAM);
         }
         private bool detected = false;
-        private static int NCAM;
+        private int NCAM;
         private Image<Bgr, byte> lastFrame;
-        private VideoCapture _cap = new VideoCapture(NCAM);
+        private VideoCapture _cap;
         private ImageBox imageBox;
         private string destFolder;
-        private SaveImage imageSaver = new SaveImage();      
+        private SaveImage imageSaver = new SaveImage();
+        private frameClass(Image<Bgr, byte> picture, string name)
+        {
+            img = picture;
+            fName = name;
+        }
 
         public void MainStart()
         {
+            Console.WriteLine("Using Camera " + NCAM);
             Timer TN = new Timer();
             TN.Tick += new EventHandler(NormalCapture);
             TN.Interval = 1000;
@@ -54,6 +61,7 @@ namespace Image_detection_Surveilance
 
         private void detectionCapture(object sender, EventArgs e)
         {
+
             
         }
     }

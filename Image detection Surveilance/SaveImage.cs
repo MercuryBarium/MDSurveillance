@@ -20,15 +20,13 @@ namespace Image_detection_Surveilance
         public void saveJpeg(Image<Bgr, byte> image, string saveFolder, string fileName)
         {
             string desiredDIR = Application.StartupPath + @"\\" + saveFolder;
+
             if (!Directory.Exists(desiredDIR))
             {
                 
 
                 Directory.CreateDirectory(desiredDIR);
             }
-
-
-
 
             FileStream stream = File.OpenWrite(desiredDIR + @"\\" + fileName + ".jpeg");
             Image SystemImage = image.ToBitmap();

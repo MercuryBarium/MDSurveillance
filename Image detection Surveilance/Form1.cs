@@ -18,7 +18,7 @@ namespace Image_detection_Surveilance
 
         private FilterInfoCollection videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
         private List<CCTV> securityCameras = new List<CCTV>();
-        
+        private int Count = 0;
 
         public Form1()
         {
@@ -37,9 +37,10 @@ namespace Image_detection_Surveilance
                     TabStop = false
                 };
                 flowLayoutPanel1.Controls.Add(box);
-                CCTV cTV = new CCTV(box, videoDevices[securityCameras.Count].Name, securityCameras.Count);
+                CCTV cTV = new CCTV(box, videoDevices[securityCameras.Count].Name, Count);
                 cTV.MainStart();
                 securityCameras.Add(cTV);
+                Count++;
             }
             catch 
             {
