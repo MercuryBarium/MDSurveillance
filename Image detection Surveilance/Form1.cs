@@ -22,6 +22,7 @@ namespace Image_detection_Surveilance
 
         public Form1()
         {
+            
             InitializeComponent(); 
         }
 
@@ -48,6 +49,18 @@ namespace Image_detection_Surveilance
             }
             
             
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach(var C in securityCameras)
+            {
+                C.shuttingDown = true;
+                while(!C.readyToShutDown)
+                {
+                    
+                }
+            }
         }
     }
 }
