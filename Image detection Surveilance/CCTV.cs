@@ -11,6 +11,17 @@ using System.Windows.Forms;
 
 namespace Image_detection_Surveilance
 {
+    class frameClass
+    {
+        public frameClass(Image<Bgr, byte> image, string id)
+        {
+            img = image;
+            name = id;
+        }
+        public Image<Bgr,byte> img;
+        public string name;
+    }
+    
     class CCTV 
     {
         public CCTV(ImageBox imBox, string dest, int cameraInt)
@@ -27,11 +38,9 @@ namespace Image_detection_Surveilance
         private ImageBox imageBox;
         private string destFolder;
         private SaveImage imageSaver = new SaveImage();
-        private frameClass(Image<Bgr, byte> picture, string name)
-        {
-            img = picture;
-            fName = name;
-        }
+        private bool shuttingDown = false;
+        
+        private List<frameClass> frameQueue = new List<frameClass>();
 
         public void MainStart()
         {
@@ -40,6 +49,22 @@ namespace Image_detection_Surveilance
             TN.Tick += new EventHandler(NormalCapture);
             TN.Interval = 1000;
             TN.Start();
+            Timer QueueSaver = new Timer();
+            QueueSaver.Tick += new EventHandler(ImageQueueSaver);
+            QueueSaver.Start();
+
+        }
+
+        private void ImageQueueSaver(object sender, EventArgs e)
+        {
+            if(frameQueue.Count > 0)
+            {
+                imageSaver.saveJpeg(frameQueue[0].img, destFolder, frameQueue[0].name);
+                Console.WriteLine("Images left to save:     " + frameQueue.Count);
+                frameQueue.RemoveAt(0);
+
+            }
+            
         }
         
 
@@ -52,8 +77,9 @@ namespace Image_detection_Surveilance
                 
                 string S = destFolder + "  " + timeNow.ToString();
                 CvInvoke.PutText(currentFrame, S, new System.Drawing.Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0,0,255).MCvScalar);
-
-                imageSaver.saveJpeg(currentFrame, destFolder, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms"));
+                frameClass P = new frameClass(currentFrame, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms"));
+                frameQueue.Add(P);
+                
                 imageBox.Image = currentFrame;
                 imageBox.Invalidate();
             }
