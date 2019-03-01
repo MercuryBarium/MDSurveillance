@@ -60,6 +60,21 @@ namespace Image_detection_Surveilance
             QueueSaver.Start();
         }
 
+        public void ShutdownSequence()
+        {
+            if (frameQueue.Count > 0)
+            {
+                imageSaver.saveJpeg(frameQueue[0].img, destFolder, frameQueue[0].name);
+                Console.WriteLine("Images left to save:     " + frameQueue.Count);
+                frameQueue.RemoveAt(0);
+
+            }
+            else if (frameQueue.Count == 0)
+            {
+                readyToShutDown = true;
+            }
+        }
+
         private void ImageQueueSaver(object sender, EventArgs e)
         {
             if(frameQueue.Count > 0)

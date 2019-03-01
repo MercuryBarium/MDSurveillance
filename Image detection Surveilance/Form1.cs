@@ -58,7 +58,7 @@ namespace Image_detection_Surveilance
                 C.shuttingDown = true;
                 while(!C.readyToShutDown)
                 {
-                    
+                    C.ShutdownSequence();
                 }
             }
         }
