@@ -43,7 +43,6 @@ namespace Image_detection_Surveilance
         public bool readyToShutDown = false;
         public bool shuttingDown = false;
         private List<frameClass> frameQueue = new List<frameClass>();
-        //private Thread T1 = new Thread();
 
 
        
@@ -58,7 +57,8 @@ namespace Image_detection_Surveilance
             TN.Interval = 1000;
             TN.Start();
 
-            
+            Thread T1 = new Thread(new ThreadStart(ImageQueueSaver));
+            T1.Start();
         }
 
         public void ShutdownSequence()
@@ -78,18 +78,20 @@ namespace Image_detection_Surveilance
 
         private void ImageQueueSaver()
         {
-            if(frameQueue.Count > 0)
+            while (1 == 1)
             {
-                imageSaver.saveJpeg(frameQueue[0].img, destFolder, frameQueue[0].name);
-                Console.WriteLine("Images left to save:     " + frameQueue.Count);
-                frameQueue.RemoveAt(0);
-                readyToShutDown = false;
-            } 
-            else if (frameQueue.Count == 0)
-            {
-                readyToShutDown = true;
+                if (frameQueue.Count > 0)
+                {
+                    imageSaver.saveJpeg(frameQueue[0].img, destFolder, frameQueue[0].name);
+                    Console.WriteLine("Images left to save:     " + frameQueue.Count);
+                    frameQueue.RemoveAt(0);
+                    readyToShutDown = false;
+                }
+                else if (frameQueue.Count == 0)
+                {
+                    readyToShutDown = true;
+                }
             }
-            
         }
         
 
