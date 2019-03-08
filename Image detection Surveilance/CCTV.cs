@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
-
+using Timer = System.Windows.Forms.Timer;
 
 namespace Image_detection_Surveilance
 {
@@ -36,28 +36,29 @@ namespace Image_detection_Surveilance
         private int NCAM;
         private Image<Bgr, byte> lastFrame;
         private VideoCapture _cap;
+        private MotionHistory history = new MotionHistory(1, 0.05, 0.5);
         private ImageBox imageBox;
         private string destFolder;
         private SaveImage imageSaver = new SaveImage();
         public bool readyToShutDown = false;
         public bool shuttingDown = false;
+        private List<frameClass> frameQueue = new List<frameClass>();
+        //private Thread T1 = new Thread();
 
 
        
         
-        private List<frameClass> frameQueue = new List<frameClass>();
+        
 
         public void MainStart()
         {
             Console.WriteLine("Using Camera " + NCAM);
             Timer TN = new Timer();
             TN.Tick += new EventHandler(NormalCapture);
-            TN.Interval = 33;
+            TN.Interval = 1000;
             TN.Start();
 
-            Timer QueueSaver = new Timer();
-            QueueSaver.Tick += new EventHandler(ImageQueueSaver);
-            QueueSaver.Start();
+            
         }
 
         public void ShutdownSequence()
@@ -75,14 +76,14 @@ namespace Image_detection_Surveilance
             }
         }
 
-        private void ImageQueueSaver(object sender, EventArgs e)
+        private void ImageQueueSaver()
         {
             if(frameQueue.Count > 0)
             {
                 imageSaver.saveJpeg(frameQueue[0].img, destFolder, frameQueue[0].name);
                 Console.WriteLine("Images left to save:     " + frameQueue.Count);
                 frameQueue.RemoveAt(0);
-
+                readyToShutDown = false;
             } 
             else if (frameQueue.Count == 0)
             {
