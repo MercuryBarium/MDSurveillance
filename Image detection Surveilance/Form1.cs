@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -53,14 +54,20 @@ namespace Image_detection_Surveilance
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            long X = 0;
             foreach(var C in securityCameras)
             {
                 C.shuttingDown = true;
-                while(!C.readyToShutDown)
+                Thread.Sleep(4000);
+                C.T1.Abort();
+                while (!C.readyToShutDown)
                 {
-                    C.ShutdownSequence();
+                    C.IMGsaver();
                 }
+                Console.WriteLine(C.frameQueue.Count);
+                X += C.totalImgsSaved;
             }
+            Console.WriteLine("Total images saved!   " + X);
         }
     }
 }

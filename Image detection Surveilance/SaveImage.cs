@@ -15,7 +15,7 @@ namespace Image_detection_Surveilance
 {
     class SaveImage 
     {
-        private FileStream stream;
+        
 
         public void saveJpeg(Image<Bgr, byte> image, string saveFolder, string fileName)
         {
@@ -28,10 +28,13 @@ namespace Image_detection_Surveilance
                 Directory.CreateDirectory(desiredDIR);
             }
 
-            stream = File.OpenWrite(desiredDIR + @"\\" + fileName + ".jpeg");
+            FileStream stream = File.OpenWrite(desiredDIR + @"\\" + fileName + ".bmp");
+            
             Image SystemImage = image.ToBitmap();
-            SystemImage.Save(stream, ImageFormat.Jpeg);
+            SystemImage.Save(stream, ImageFormat.Bmp);
+            stream.Flush();
             stream.Close();
+            stream.Dispose();
         }
 
         
