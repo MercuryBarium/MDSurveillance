@@ -1,9 +1,11 @@
 ﻿using Emgu.CV;
+using Emgu.CV.Cuda;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -33,11 +35,13 @@ namespace Image_detection_Surveilance
             NCAM = cameraInt;
             _cap = new VideoCapture(NCAM);
         }
+
+        private VideoCapture _cap;
+        private CudaImageDetection detectionCuda = new CudaImageDetection();
         private ActionLogger log;
         private bool detected = false;
         private int NCAM;
-        private Image<Bgr, byte> lastFrame;
-        private VideoCapture _cap;
+        private Image<Bgr, byte> currentFrame;
         private MotionHistory history = new MotionHistory(1, 0.05, 0.5);
         private ImageBox imageBox;
         private string destFolder;
@@ -52,11 +56,18 @@ namespace Image_detection_Surveilance
 
         public void MainStart()
         {
+            currentFrame = _cap.QueryFrame().ToImage<Bgr, byte>();
+
             Console.WriteLine("Using Camera " + NCAM);
             Timer TN = new Timer();
             TN.Tick += new EventHandler(NormalCapture);
             TN.Interval = 1000;
             TN.Start();
+
+            Timer TD = new Timer();
+            TD.Tick += new EventHandler(detectionCapture);
+            TD.Interval = 33;
+            TD.Start();
 
             T1 = new Thread(new ThreadStart(ImageQueueSaver));
             T1.Priority = ThreadPriority.Highest;
@@ -110,13 +121,12 @@ namespace Image_detection_Surveilance
                     DateTime timeNow = DateTime.Now;
 
                     string S = destFolder + "  " + timeNow.ToString();
-                    CvInvoke.PutText(currentFrame, S, new System.Drawing.Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 255).MCvScalar);
+                    CvInvoke.PutText(currentFrame, S, new Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 255).MCvScalar);
                     frameClass P = new frameClass(currentFrame, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms"));
                     frameQueue.Add(P);
                     
                     
-                    imageBox.Image = currentFrame;
-                    imageBox.Invalidate();
+                    
                 }
             }
         }
@@ -126,6 +136,28 @@ namespace Image_detection_Surveilance
             if(!shuttingDown)
             {
                 
+                DateTime timeNow = DateTime.Now;
+
+                string S = destFolder + "  " + timeNow.ToString();
+                CvInvoke.PutText(currentFrame, S, new Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 255).MCvScalar);
+                Rectangle[] subjects = detectionCuda.FilterImage(currentFrame);
+                if(subjects.Length > 0)
+                {
+                    detected = true;
+                    Image<Bgr, byte> detectedImage = detectionCuda.drawRectangles(subjects, currentFrame);
+                    frameClass detFrame = new frameClass(detectedImage, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms") + "-[DETECTED]");
+                    imageBox.Image = detectedImage;
+                    imageBox.Invalidate();
+                    log.ActWrite("Detected Subject at [" + timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms") + "]");
+                    frameQueue.Add(detFrame);
+                }
+                else
+                {
+                    detected = false;
+                    imageBox.Image = currentFrame;
+                    imageBox.Invalidate();
+                }
+
             }
             
         }
