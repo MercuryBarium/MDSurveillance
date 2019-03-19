@@ -29,9 +29,11 @@ namespace Image_detection_Surveilance
         {
             imageBox = imBox;
             destFolder = dest;
+            log = new ActionLogger(dest);
             NCAM = cameraInt;
             _cap = new VideoCapture(NCAM);
         }
+        private ActionLogger log;
         private bool detected = false;
         private int NCAM;
         private Image<Bgr, byte> lastFrame;
@@ -45,6 +47,7 @@ namespace Image_detection_Surveilance
         public List<frameClass> frameQueue = new List<frameClass>();
         public long totalImgsSaved = 0;
         public Thread T1;
+
         
 
         public void MainStart()
@@ -78,9 +81,9 @@ namespace Image_detection_Surveilance
                     }
                     totalImgsSaved++;
                 }
-                catch
+                catch (Exception e)
                 {
-
+                    Console.WriteLine(e);
                 }
             }
             
@@ -111,6 +114,7 @@ namespace Image_detection_Surveilance
                     frameClass P = new frameClass(currentFrame, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms"));
                     frameQueue.Add(P);
                     
+                    
                     imageBox.Image = currentFrame;
                     imageBox.Invalidate();
                 }
@@ -121,7 +125,7 @@ namespace Image_detection_Surveilance
         {
             if(!shuttingDown)
             {
-
+                
             }
             
         }
