@@ -12,7 +12,7 @@ namespace Image_detection_Surveilance
 {
     class ImageDetections
     {
-        CascadeClassifier filter = new CascadeClassifier(@"C:\Users\usr\Desktop\MDSurveillance\MDSurveillance\Image detection Surveilance\bin\x64\Debug\HAARCASCADES\haarcascade_eye.xml");
+        CascadeClassifier filter = new CascadeClassifier(Application.StartupPath + "/HAARCASCADE/haarcascade_frontalface_alt.xml");
         public Rectangle[] filterImage(Image<Bgr, byte> currentFrame)
         {
             using(Image<Gray,byte> grayFrame = currentFrame.Convert<Gray,byte>())

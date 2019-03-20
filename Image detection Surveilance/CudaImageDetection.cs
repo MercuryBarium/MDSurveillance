@@ -18,7 +18,7 @@ namespace Image_detection_Surveilance
 
         public CudaImageDetection(/*string filterPath*/)
         {
-            filter = new CudaCascadeClassifier(Application.StartupPath + @"\CUDAHAAR\haarcascade_frontalface_alt_tree.xml");
+            filter = new CudaCascadeClassifier(Application.StartupPath + "/CUDAHAAR/haarcascade_frontalface_alt.xml");
         }
 
 

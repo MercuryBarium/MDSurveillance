@@ -50,6 +50,7 @@ namespace Image_detection_Surveilance
         private VideoCapture _cap;
         private CudaImageDetection detectionCuda;
         private ImageDetections detection = new ImageDetections();
+        private SaveImage imageSaver = new SaveImage();
         private ActionLogger log;
         private bool detected = false;
         private int NCAM;
@@ -57,7 +58,6 @@ namespace Image_detection_Surveilance
         private MotionHistory history = new MotionHistory(1, 0.05, 0.5);
         private ImageBox imageBox;
         private string destFolder;
-        private SaveImage imageSaver = new SaveImage();
         public bool readyToShutDown = false;
         public bool shuttingDown = false;
         public List<frameClass> frameQueue = new List<frameClass>();
@@ -75,12 +75,12 @@ namespace Image_detection_Surveilance
             TN.Interval = 1000;
             TN.Start();
 
-            /*Timer TD = new Timer();
+            Timer TD = new Timer();
             TD.Tick += new EventHandler(detectionCapture);
             TD.Interval = 33;
-            TD.Start();*/
-            Thread TD = new Thread(new ThreadStart(detCap));
             TD.Start();
+            //Thread TD = new Thread(new ThreadStart(detCap));
+            //TD.Start();
 
             T1 = new Thread(new ThreadStart(ImageQueueSaver));
             T1.Priority = ThreadPriority.Highest;
@@ -141,18 +141,19 @@ namespace Image_detection_Surveilance
             }
         }
 
-        private void detCap()
+       /* private void detCap()
         {
             while(Thread.CurrentThread.IsAlive)
             {
                 detectionCapture();
             }
-        }
+        }*/
 
-        private void detectionCapture(/*object sender, EventArgs e*/)
+        private void detectionCapture(object sender, EventArgs e)
         {
             if(!shuttingDown)
             {
+                currentFrame = _cap.QueryFrame().ToImage<Bgr, byte>();
                 
                 DateTime timeNow = DateTime.Now;
 

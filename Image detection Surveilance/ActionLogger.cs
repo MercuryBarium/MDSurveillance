@@ -15,7 +15,10 @@ namespace Image_detection_Surveilance
         public ActionLogger(string cameraName)
         {
             filePath = Application.StartupPath + @"\\" + cameraName + @"\\LogFile.txt";
-
+            if(!Directory.Exists(Application.StartupPath + @"\\" + cameraName))
+            {
+                Directory.CreateDirectory(Application.StartupPath + @"\\" + cameraName);
+            }
             if (!File.Exists(filePath))
             {
                 FileStream stream = File.Create(filePath);
