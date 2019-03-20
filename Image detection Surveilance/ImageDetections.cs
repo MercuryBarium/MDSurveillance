@@ -12,15 +12,22 @@ namespace Image_detection_Surveilance
 {
     class ImageDetections
     {
-        CascadeClassifier filter = new CascadeClassifier(Application.StartupPath + "/HAARCASCADE/haarcascade_frontalface_alt.xml");
+        CascadeClassifier filter = new CascadeClassifier(@"C:\Users\usr\Desktop\MDSurveillance\MDSurveillance\Image detection Surveilance\bin\x64\Debug\HAARCASCADES\haarcascade_eye.xml");
         public Rectangle[] filterImage(Image<Bgr, byte> currentFrame)
         {
-            Rectangle[] rectangles = filter.DetectMultiScale(currentFrame);
-            return rectangles;
+            using(Image<Gray,byte> grayFrame = currentFrame.Convert<Gray,byte>())
+            {
+                Rectangle[] rectangles = filter.DetectMultiScale(grayFrame);
+                return rectangles;
+            }
         }
         public Image<Bgr, byte> drawRectangles(Rectangle[] rectangles, Image<Bgr, byte> image)
         {
-            image.Draw()
+            foreach(Rectangle A in rectangles)
+            {
+                image.Draw(A, new Bgr(Color.Red), 1);
+            }
+            return image;
         }
     }
 }

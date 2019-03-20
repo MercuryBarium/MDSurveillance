@@ -38,6 +38,10 @@ namespace Image_detection_Surveilance
             {
                 detectionCuda = new CudaImageDetection();
                 useCuda = true;
+            } else
+            {
+                detection = new ImageDetections();
+                useCuda = false;
             }
         }
 
@@ -45,6 +49,7 @@ namespace Image_detection_Surveilance
         private bool useCuda;
         private VideoCapture _cap;
         private CudaImageDetection detectionCuda;
+        private ImageDetections detection = new ImageDetections();
         private ActionLogger log;
         private bool detected = false;
         private int NCAM;
@@ -59,7 +64,6 @@ namespace Image_detection_Surveilance
         public long totalImgsSaved = 0;
         public Thread T1;
 
-        
 
         public void MainStart()
         {
@@ -71,9 +75,11 @@ namespace Image_detection_Surveilance
             TN.Interval = 1000;
             TN.Start();
 
-            Timer TD = new Timer();
+            /*Timer TD = new Timer();
             TD.Tick += new EventHandler(detectionCapture);
             TD.Interval = 33;
+            TD.Start();*/
+            Thread TD = new Thread(new ThreadStart(detCap));
             TD.Start();
 
             T1 = new Thread(new ThreadStart(ImageQueueSaver));
@@ -135,7 +141,15 @@ namespace Image_detection_Surveilance
             }
         }
 
-        private void detectionCapture(object sender, EventArgs e)
+        private void detCap()
+        {
+            while(Thread.CurrentThread.IsAlive)
+            {
+                detectionCapture();
+            }
+        }
+
+        private void detectionCapture(/*object sender, EventArgs e*/)
         {
             if(!shuttingDown)
             {
@@ -144,11 +158,27 @@ namespace Image_detection_Surveilance
 
                 string S = destFolder + "  " + timeNow.ToString();
                 CvInvoke.PutText(currentFrame, S, new Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 255).MCvScalar);
-                Rectangle[] subjects = detectionCuda.FilterImage(currentFrame);
+                Rectangle[] subjects;
+                if (useCuda)
+                {
+                    subjects = detectionCuda.FilterImage(currentFrame);
+                } else
+                {
+                    subjects = detection.filterImage(currentFrame);
+                }
+                
                 if(subjects.Length > 0)
                 {
                     detected = true;
-                    Image<Bgr, byte> detectedImage = detectionCuda.drawRectangles(subjects, currentFrame);
+                    Image<Bgr, byte> detectedImage;
+                    if (useCuda)
+                    {
+                        detectedImage = detectionCuda.drawRectangles(subjects, currentFrame);
+                    } else
+                    {
+                        detectedImage = detection.drawRectangles(subjects, currentFrame);
+                    }
+                    
                     frameClass detFrame = new frameClass(detectedImage, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms") + "-[DETECTED]");
                     imageBox.Image = detectedImage;
                     imageBox.Invalidate();
