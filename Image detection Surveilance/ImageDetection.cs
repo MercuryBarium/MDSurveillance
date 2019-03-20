@@ -10,9 +10,15 @@ using System.Windows.Forms;
 
 namespace Image_detection_Surveilance
 {
-    class ImageDetections
+    class ImageDetection
     {
-        CascadeClassifier filter = new CascadeClassifier(Application.StartupPath + "/HAARCASCADE/haarcascade_frontalface_alt.xml");
+        CascadeClassifier filter;
+
+        public ImageDetection(string cascadePath)
+        {
+            filter = new CascadeClassifier(cascadePath);
+        }
+
         public Rectangle[] filterImage(Image<Bgr, byte> currentFrame)
         {
             using(Image<Gray,byte> grayFrame = currentFrame.Convert<Gray,byte>())

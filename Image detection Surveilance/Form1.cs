@@ -1,11 +1,13 @@
 ﻿using AForge.Video.DirectShow;
 using Emgu.CV;
+using Emgu.CV.Cuda;
 using Emgu.CV.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,10 +23,33 @@ namespace Image_detection_Surveilance
         private List<CCTV> securityCameras = new List<CCTV>();
         private int Count = 0;
 
+
         public Form1()
         {
-            
-            InitializeComponent(); 
+
+            if (!File.Exists(Application.StartupPath + @"\CascadePath.txt"))
+            {
+                OpenFileDialog f = new OpenFileDialog();
+                f.InitialDirectory = "C:\\";
+                f.Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
+                f.FilterIndex = 2;
+                f.RestoreDirectory = true;
+                if (CudaInvoke.HasCuda)
+                {
+                    MessageBox.Show("CUDA CAPABILITES DETETECTED! Please select a HaarCascade for CUDA");
+                } else
+                {
+                    MessageBox.Show("Please select a regular HaarCascade");
+                }
+
+                f.ShowDialog();
+                File.WriteAllText(Application.StartupPath + @"\CascadePath.txt", f.FileName);
+
+            }
+
+            InitializeComponent();
+
+
         }
 
         private void cameraAdder_Click(object sender, EventArgs e)
@@ -39,7 +64,7 @@ namespace Image_detection_Surveilance
                     TabStop = false
                 };
                 flowLayoutPanel1.Controls.Add(box);
-                CCTV cTV = new CCTV(box, videoDevices[securityCameras.Count].Name, Count);
+                CCTV cTV = new CCTV(box, videoDevices[securityCameras.Count].Name, Count, File.ReadAllText(Application.StartupPath + @"\CascadePath.txt"));
                 cTV.MainStart();
                 securityCameras.Add(cTV);
                 Count++;
@@ -68,6 +93,7 @@ namespace Image_detection_Surveilance
                 X += C.totalImgsSaved;
             }
             Console.WriteLine("Total images saved!   " + X);
+            Console.WriteLine(Application.StartupPath);
         }
     }
 }

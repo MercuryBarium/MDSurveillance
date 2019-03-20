@@ -27,7 +27,7 @@ namespace Image_detection_Surveilance
     
     class CCTV 
     {
-        public CCTV(ImageBox imBox, string dest, int cameraInt)
+        public CCTV(ImageBox imBox, string dest, int cameraInt, string cascPath)
         {
             imageBox = imBox;
             destFolder = dest;
@@ -36,12 +36,14 @@ namespace Image_detection_Surveilance
             _cap = new VideoCapture(NCAM);
             if (CudaInvoke.HasCuda)
             {
-                detectionCuda = new CudaImageDetection();
+                detectionCuda = new CudaImageDetection(cascPath);
                 useCuda = true;
+                Console.WriteLine("Using CUDA");
             } else
             {
-                detection = new ImageDetections();
+                detection = new ImageDetection(cascPath);
                 useCuda = false;
+                Console.WriteLine("Not using Cuda");
             }
         }
 
@@ -49,7 +51,7 @@ namespace Image_detection_Surveilance
         private bool useCuda;
         private VideoCapture _cap;
         private CudaImageDetection detectionCuda;
-        private ImageDetections detection = new ImageDetections();
+        private ImageDetection detection;
         private SaveImage imageSaver = new SaveImage();
         private ActionLogger log;
         private bool detected = false;
@@ -137,6 +139,7 @@ namespace Image_detection_Surveilance
                     CvInvoke.PutText(currentFrame, S, new Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 255).MCvScalar);
                     frameClass P = new frameClass(currentFrame, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms"));
                     frameQueue.Add(P);
+                    log.ActWrite(timeNow.ToString("yyyy-dd-M--HH-mm-ss"));
                 }
             }
         }

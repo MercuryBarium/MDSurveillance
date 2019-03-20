@@ -16,9 +16,10 @@ namespace Image_detection_Surveilance
         private CudaCascadeClassifier filter;
 
 
-        public CudaImageDetection(/*string filterPath*/)
+        public CudaImageDetection(string filterPath)
         {
-            filter = new CudaCascadeClassifier(Application.StartupPath + "/CUDAHAAR/haarcascade_frontalface_alt.xml");
+            filter = new CudaCascadeClassifier(filterPath);
+            //Application.StartupPath + "/CUDAHAAR/haarcascade_frontalface_alt.xml"
         }
 
 
