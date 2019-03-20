@@ -179,11 +179,12 @@ namespace Image_detection_Surveilance
                     {
                         detectedImage = detection.drawRectangles(subjects, currentFrame);
                     }
-                    
-                    frameClass detFrame = new frameClass(detectedImage, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms") + "-[DETECTED]");
+                    string rndm = new Random().Next(1000, 10000).ToString();
+                    frameClass detFrame = new frameClass(detectedImage, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms") + "-[DETECTED "+ rndm + "]");
                     imageBox.Image = detectedImage;
                     imageBox.Invalidate();
                     log.ActWrite("Detected Subject at [" + timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms") + "]");
+                    Console.WriteLine("Cotcha!");
                     frameQueue.Add(detFrame);
                 }
                 else
