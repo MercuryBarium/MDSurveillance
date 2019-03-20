@@ -34,10 +34,17 @@ namespace Image_detection_Surveilance
             log = new ActionLogger(dest);
             NCAM = cameraInt;
             _cap = new VideoCapture(NCAM);
+            if (CudaInvoke.HasCuda)
+            {
+                detectionCuda = new CudaImageDetection();
+                useCuda = true;
+            }
         }
 
+
+        private bool useCuda;
         private VideoCapture _cap;
-        private CudaImageDetection detectionCuda = new CudaImageDetection();
+        private CudaImageDetection detectionCuda;
         private ActionLogger log;
         private bool detected = false;
         private int NCAM;
@@ -124,9 +131,6 @@ namespace Image_detection_Surveilance
                     CvInvoke.PutText(currentFrame, S, new Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 255).MCvScalar);
                     frameClass P = new frameClass(currentFrame, timeNow.ToString("yyyy-dd-M--HH-mm-ss-ms"));
                     frameQueue.Add(P);
-                    
-                    
-                    
                 }
             }
         }
