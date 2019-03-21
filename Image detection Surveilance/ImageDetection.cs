@@ -12,22 +12,35 @@ namespace Image_detection_Surveilance
 {
     class ImageDetection
     {
-        CascadeClassifier filter;
+        List<CascadeClassifier> filters = new List<CascadeClassifier>();
 
-        public ImageDetection(string cascadePath)
+        public ImageDetection(string[] cascadePaths)
         {
-            filter = new CascadeClassifier(cascadePath);
+            foreach(string S in cascadePaths)
+            {
+                filters.Add(new CascadeClassifier(S));
+            }
+            
         }
 
-        public Rectangle[] filterImage(Image<Bgr, byte> currentFrame)
+        public List<Rectangle> filterImage(Image<Bgr, byte> currentFrame)
         {
             using(Image<Gray,byte> grayFrame = currentFrame.Convert<Gray,byte>())
             {
-                Rectangle[] rectangles = filter.DetectMultiScale(grayFrame);
+                List<Rectangle> rectangles = new List<Rectangle>();
+                foreach(CascadeClassifier F in filters)
+                {
+                    Rectangle[] rect = F.DetectMultiScale(grayFrame);
+                    foreach(Rectangle R in rect)
+                    {
+                        rectangles.Add(R);
+                    }
+                }
+
                 return rectangles;
             }
         }
-        public Image<Bgr, byte> drawRectangles(Rectangle[] rectangles, Image<Bgr, byte> image)
+        public Image<Bgr, byte> drawRectangles(List<Rectangle> rectangles, Image<Bgr, byte> image)
         {
             foreach(Rectangle A in rectangles)
             {

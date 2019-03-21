@@ -13,28 +13,40 @@ namespace Image_detection_Surveilance
 {
     class CudaImageDetection
     {
-        private CudaCascadeClassifier filter;
+        private List<CudaCascadeClassifier> filters = new List<CudaCascadeClassifier>();
 
 
-        public CudaImageDetection(string filterPath)
+        public CudaImageDetection(string[] filterPaths)
         {
-            filter = new CudaCascadeClassifier(filterPath);
+            foreach(string S in filterPaths)
+            {
+                filters.Add(new CudaCascadeClassifier(S));
+            }
             //Application.StartupPath + "/CUDAHAAR/haarcascade_frontalface_alt.xml"
         }
 
 
-        public Rectangle[] FilterImage(Image<Bgr, byte> currentFrame) 
+        public List<Rectangle> FilterImage(Image<Bgr, byte> currentFrame) 
         {
             using (GpuMat faceRegionMat = new GpuMat())
             {
+                List<Rectangle> rectangles = new List<Rectangle>();
                 CudaImage<Gray, byte> cudaIMG = new CudaImage<Gray, byte>(currentFrame);
-                filter.DetectMultiScale(cudaIMG.Convert<Gray, byte>(), faceRegionMat);
-                Rectangle[] detectedSubjects = filter.Convert(faceRegionMat);
-                return detectedSubjects;
+                foreach(CudaCascadeClassifier F in filters)
+                {
+                    F.DetectMultiScale(cudaIMG.Convert<Gray, byte>(), faceRegionMat);
+                    Rectangle[] detectedSubjects = F.Convert(faceRegionMat);
+                    foreach(Rectangle R in detectedSubjects)
+                    {
+                        rectangles.Add(R);
+                    }
+                }
+                
+                return rectangles;
             }
             
         }
-        public Image<Bgr, byte> drawRectangles(Rectangle[] rectangles, Image<Bgr, byte> image)
+        public Image<Bgr, byte> drawRectangles(List<Rectangle> rectangles, Image<Bgr, byte> image)
         {
 
             foreach(Rectangle R in rectangles)

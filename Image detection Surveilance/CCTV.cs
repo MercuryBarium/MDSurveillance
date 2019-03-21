@@ -27,7 +27,7 @@ namespace Image_detection_Surveilance
     
     class CCTV 
     {
-        public CCTV(ImageBox imBox, string dest, int cameraInt, string cascPath)
+        public CCTV(ImageBox imBox, string dest, int cameraInt, string[] cascPath)
         {
             imageBox = imBox;
             destFolder = dest;
@@ -162,7 +162,7 @@ namespace Image_detection_Surveilance
 
                 string S = destFolder + "  " + timeNow.ToString();
                 CvInvoke.PutText(currentFrame, S, new Point(10, 25), FontFace.HersheyComplex, 0.5, new Bgr(0, 0, 255).MCvScalar);
-                Rectangle[] subjects;
+                List<Rectangle> subjects;
                 if (useCuda)
                 {
                     subjects = detectionCuda.FilterImage(currentFrame);
@@ -171,7 +171,7 @@ namespace Image_detection_Surveilance
                     subjects = detection.filterImage(currentFrame);
                 }
                 
-                if(subjects.Length > 0)
+                if(subjects.Count > 0)
                 {
                     detected = true;
                     Image<Bgr, byte> detectedImage;

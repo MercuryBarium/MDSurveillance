@@ -33,6 +33,7 @@ namespace Image_detection_Surveilance
                 f.InitialDirectory = "C:\\";
                 f.Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
                 f.FilterIndex = 2;
+                f.Multiselect = true;
                 f.RestoreDirectory = true;
                 if (CudaInvoke.HasCuda)
                 {
@@ -43,7 +44,7 @@ namespace Image_detection_Surveilance
                 }
 
                 f.ShowDialog();
-                File.WriteAllText(Application.StartupPath + @"\CascadePath.txt", f.FileName);
+                File.WriteAllLines(Application.StartupPath + @"\CascadePath.txt", f.FileNames);
 
             }
 
@@ -64,7 +65,7 @@ namespace Image_detection_Surveilance
                     TabStop = false
                 };
                 flowLayoutPanel1.Controls.Add(box);
-                CCTV cTV = new CCTV(box, videoDevices[securityCameras.Count].Name, Count, File.ReadAllText(Application.StartupPath + @"\CascadePath.txt"));
+                CCTV cTV = new CCTV(box, videoDevices[securityCameras.Count].Name, Count, File.ReadAllLines(Application.StartupPath + @"\CascadePath.txt"));
                 cTV.MainStart();
                 securityCameras.Add(cTV);
                 Count++;
