@@ -31,7 +31,7 @@ namespace Image_detection_Surveilance
             using (GpuMat faceRegionMat = new GpuMat())
             {
                 List<Rectangle> rectangles = new List<Rectangle>();
-                CudaImage<Gray, byte> cudaIMG = new CudaImage<Gray, byte>(currentFrame);
+                CudaImage<Gray, byte> cudaIMG = new CudaImage<Gray, byte>(currentFrame.Convert<Gray, byte>());
                 foreach(CudaCascadeClassifier F in filters)
                 {
                     F.DetectMultiScale(cudaIMG.Convert<Gray, byte>(), faceRegionMat);
