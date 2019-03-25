@@ -57,7 +57,6 @@ namespace Image_detection_Surveilance
         private bool detected = false;
         private int NCAM;
         private Image<Bgr, byte> currentFrame;
-        private MotionHistory history = new MotionHistory(1, 0.05, 0.5);
         private ImageBox imageBox;
         private string destFolder;
         public bool readyToShutDown = false;
